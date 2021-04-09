@@ -6,8 +6,10 @@
             .column
                 .block
                     form(id="search", @submit.prevent="search")
-                        input.input(type="text", placeholder="Find a player", v-model="name")
-                    .message.is-danger(v-if="error !== ''")
+                        .field
+                            input.input(type="text", placeholder="Find a player", v-model="name", :class="{'is-danger': searchMessage}")
+                            p.help.is-danger(v-if="searchMessage") {{ searchMessage }}
+                    .message.is-danger(v-if="error")
                         .message-body {{ error }}
                 transition(name="fade")
                     .block(v-if="searchMode && playersTracked > 0")
@@ -42,6 +44,17 @@ export default {
     computed: {
         playersTrackedFancy() {
             return formatLargeNumber(this.playersTracked)
+        },
+        searchMessage() {
+            if (this.name.length > 16) {
+                return "Player names must be at most 16 characters"
+            }
+
+            else if (this.name.length > 0 && (/[^a-zA-Z0-9_]/g).test(this.name)) {
+                return "Player names can only contain letters, numbers, and underscores"
+            }
+
+            return ""
         }
     },
     mounted(){
@@ -55,6 +68,8 @@ export default {
     },
     methods: {
         search(){
+            if (this.searchMessage || !this.name.length)
+                return
             if (this.player)
                 window.location.href = "/stats/" + this.name;
             else {
@@ -94,7 +109,7 @@ export default {
         margin-top: 2rem;
     }
 
-    input {
+    .field {
         margin: 0rem auto;
         width: 80%;
         display: block;

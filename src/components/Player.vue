@@ -33,10 +33,10 @@
                 .block(v-if="data")
                     .tabs.is-toggle.is-centered
                         ul
-                            li(v-for="t in ['Casual', 'Competitive']", :class="{'is-active': mode === t}", :key="t", @click="mode = t") 
+                            li(v-for="t in availableModes", :class="{'is-active': mode === t}", :key="t", @click="mode = t") 
                                 a
                                     span {{ t }}
-                    .content#stats(v-if="data[mode.toLowerCase()]")
+                    .content#stats(v-if="data[selectedMode]")
                         StatDisplay(:stats="stats", :kit="kit")
         .column.is-one-fifth
 
@@ -80,10 +80,16 @@ export default {
         kits() {
             if (!this.data)
                 return []
-            return Object.keys(this.data[this.mode.toLowerCase()]).sort().map(it => it.charAt(0).toUpperCase() + it.slice(1).toLowerCase())
+            return Object.keys(this.data[this.selectedMode]).sort().map(it => titleCaseWord(it))
+        },
+        availableModes() {
+            if (!this.data) return []
+            return Object.keys(this.data).filter(it => Object.keys(this.data[it]).length > 0).map(it => titleCaseWord(it))
         },
         stats() {
-            let s = this.data[this.mode.toLowerCase()][this.kit]
+            if (!this.data || !this.data[this.selectedMode])
+                return {}
+            let s = this.data[this.selectedMode][this.kit]
 
             return this.addRatios(s)
         },
@@ -91,10 +97,10 @@ export default {
             if (!this.data)
                 return []
 
-            let s = this.data[this.mode.toLowerCase()]
+            let s = this.data[this.selectedMode]
 
             let mains = {}
-            let total = Object.keys(s).map(it => Number(s[it]["playtime"])).reduce((v, vp) => v + vp)
+            let total = Object.keys(s).map(it => Number(s[it]["playtime"])).reduce((v, vp) => v + vp, 0)
 
             for (var kit in s) {
                 if (s[kit]['playtime'] / total > 0.15)
@@ -102,6 +108,15 @@ export default {
             }
 
             return Object.keys(mains).sort((a, b) => mains[b] - mains[a]).slice(0, 3).map(it => titleCaseWord(it))
+        },
+        selectedMode() {
+            let s = this.mode.toLowerCase()
+
+            if (!this.data)
+                return ""
+            if (this.data[s])
+                return s
+            else return Object.keys(this.data)[0]
         }
     },
     mounted() {
@@ -114,7 +129,12 @@ export default {
             if (typeof data == "string"){
                 this.error = data
             } else {
-                if (!data.data.casual) {
+                if (data.last_game === 0) {
+                    this.status = 'Never played CTF'
+                    return
+                }
+
+                else if (!data.data || Object.keys(data.data).length == 0) {
                     this.status = 'No data available'
                     this.newPlayer = true
                     return
@@ -144,6 +164,10 @@ export default {
         },
         addRatios(a) {
             let s = a 
+
+            if (!s)
+                return s
+
             s["kdr"] = (s["deaths"] == 0) ? 0 : s["kills"] / s["deaths"]
             s["damage_ratio"] = (s["damage_received"] == 0) ? 0 : s["damage_dealt"] / s["damage_received"]
             s["capture_success"] = (s["flags_stolen"] == 0) ? 0 : s["flags_captured"] / s["flags_stolen"]
