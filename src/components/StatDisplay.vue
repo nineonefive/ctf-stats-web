@@ -47,6 +47,7 @@ const objectiveStats = ["flags_stolen", "flags_captured", "flags_recovered", "ti
 const kitStats = {
     "ARCHER": ["headshots"],
     "ASSASSIN": ['assassination_attempts'],
+    "ELF": ['flash_bombs', 'headshots'],
     "NINJA": ['flash_bombs'],
     "MEDIC": ['hp_restored']
 }
@@ -64,6 +65,8 @@ export default {
     methods: {
         fancyStat(s) {
             if (s == 'hp_restored') return "HP Restored"
+
+            else if (this.kit == "ELF" && (s == 'flash_bombs' || s == 'headshots')) return this.fancyStat('reflected_' + s)
 
             else return s.split('_').map(it => it.charAt(0).toUpperCase() + it.slice(1).toLowerCase()).join(' ')
         },

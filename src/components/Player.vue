@@ -6,7 +6,10 @@
                 article.panel.is-primary
                     p.panel-heading Class
                     .kits
-                        a.panel-block(v-for="k in kits", :key="k", :class="{'is-active': kit.toLowerCase() == k.toLowerCase()}", @click="kit = k.toUpperCase()") {{ k }}
+                        a.panel-block(v-for="k in kits", :key="k", :class="{'is-active': kit.toLowerCase() == k.toLowerCase()}", @click="kit = k.toUpperCase()") 
+                            span.panel-icon
+                                img(:src="`/assets/class-icons/${k.toLowerCase()}.png`", alt="k")
+                            | {{ k }}
         .column
             .block
                 .card(v-if="player")
