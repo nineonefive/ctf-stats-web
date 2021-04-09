@@ -26,9 +26,9 @@
                                             p.subtitle.is-6.has-text-grey(v-if="status != ''", v-html="status")
                                         .level-right(v-if="mainKits.length > 0")
                                             .tags
-                                                span.tag.is-light.is-rounded(v-for="kit in mainKits", :key="kit") 
-                                                    img(:src="`/assets/class-icons/${kit.toLowerCase()}.png`", :alt="kit", width="16")
-                                                    | &nbsp;{{ kit.charAt(0).toUpperCase() + kit.slice(1).toLowerCase() }}
+                                                span.tag.is-light.is-rounded.kit-tag(v-for="k in mainKits", :key="k", @click="kit = k.toUpperCase()") 
+                                                    img(:src="`/assets/class-icons/${k.toLowerCase()}.png`", :alt="k", width="16")
+                                                    | &nbsp;{{ k }}
             transition(name="fadey")
                 .block(v-if="data")
                     .tabs.is-toggle.is-centered
@@ -58,6 +58,7 @@ transition(name="fadey")
 <script>
 import {playerApi, newPlayerApi} from '@/api';
 import StatDisplay from '@/components/StatDisplay.vue';
+import { titleCaseWord } from '@/util';
 
 export default { 
     name: "Player", 
@@ -100,7 +101,7 @@ export default {
                     mains[kit] = s[kit]['playtime']
             }
 
-            return Object.keys(mains).sort((a, b) => mains[b] - mains[a]).slice(0, 3)
+            return Object.keys(mains).sort((a, b) => mains[b] - mains[a]).slice(0, 3).map(it => titleCaseWord(it))
         }
     },
     mounted() {
@@ -207,5 +208,9 @@ export default {
 
     .media-content > p.title {
         margin-bottom: 0.5rem;
+    }
+
+    .kit-tag {
+        cursor: pointer;
     }
 </style>

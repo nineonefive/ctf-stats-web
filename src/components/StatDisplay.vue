@@ -41,6 +41,8 @@
 </template>
 
 <script>
+import {formatDuration, titleCaseWord, formatLargeNumber, round} from '@/util';
+
 const generalStats = ['playtime']
 const pvpStats = ["kills", "deaths", "kdr", "damage_dealt", "damage_received", "damage_ratio"]
 const objectiveStats = ["flags_stolen", "flags_captured", "capture_success", "flags_recovered", "time_with_flag", "carrier_kills"]
@@ -51,6 +53,23 @@ const kitStats = {
     "NINJA": ['flash_bombs'],
     "MEDIC": ['hp_restored']
 }
+
+const specialStatTypes = {
+    "playtime": "time",
+    "time_with_flag": "time",
+
+    "damage_dealt": "largeN",
+    "damage_received": "largeN",
+    "hp_restored": "largeN",
+    "kills": "largeN",
+    "deaths": "largeN",
+
+    "kdr": "decimal",
+    "damage_ratio": "decimal",
+
+    "capture_success": "percent"
+}
+
 export default {
     name: "StatDisplay",
     props: ["kit", "stats"],
@@ -70,46 +89,21 @@ export default {
 
             else if (this.kit == "ELF" && (s == 'flash_bombs' || s == 'headshots')) return this.fancyStat('reflected_' + s)
 
-            else return s.split('_').map(it => it.charAt(0).toUpperCase() + it.slice(1).toLowerCase()).join(' ')
+            else return s.split('_').map(it => titleCaseWord(it)).join(' ')
         },
         fancyValue(s) {
             let v = this.stats[s]
-            if (s == 'playtime' || s == 'time_with_flag') {
-                let newv = ''
-                if (v > 60 * 60 * 24) {
-                    let q = Math.floor(v / (3600 * 24))
-                    newv += q + 'd ';
-                    v -= q * 3600 * 24;
-                }
 
-                if (v > 3600) {
-                    let q = Math.floor(v / (3600))
-                    newv += q + 'h ';
-                    v -= q * 3600;
-                }
+            let t = (s in specialStatTypes) ? specialStatTypes[s] : ''
 
-                if (v > 60) {
-                    let q = Math.floor(v / (60))
-                    newv += q + 'm ';
-                    v -= q * 60;
-                }
-
-                let q = Math.floor(v)
-                newv += q + 's';
-
-                return newv;
-            } else if (s == 'damage_dealt' || s == 'damage_received' || s == 'hp_restored') {
-                let suffixes = ['', 'k', 'M', 'B', 'T']
-                let power = 4
-                while (v < Math.pow(10, 3 * power)) {
-                    power -= 1;
-                }
-
-                return '' + Math.round(v / Math.pow(10, 3 * (power - 1)))/1e3 + suffixes[power]
-            } else if (s == "kdr" || s == "damage_ratio") {
-                return Math.round(v * 1000) / 1000
-            } else if (s == "capture_success") {
-                return Math.round(v * 100 * 1e3) / 1e3 + "%"
+            if (t == "time") {
+                return formatDuration(v)
+            } else if (t == "largeN") {
+                return formatLargeNumber(v)
+            } else if (t == "decimal") {
+                return round(v, 1000)
+            } else if (t == "percent") {
+                return (100 * round(v, 1000)).toFixed(3) + "%"
             } else {
                 return v
             }
