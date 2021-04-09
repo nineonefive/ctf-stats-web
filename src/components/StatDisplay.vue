@@ -42,8 +42,8 @@
 
 <script>
 const generalStats = ['playtime']
-const pvpStats = ["kills", "deaths", "damage_dealt", "damage_received"]
-const objectiveStats = ["flags_stolen", "flags_captured", "flags_recovered", "time_with_flag", "carrier_kills"]
+const pvpStats = ["kills", "deaths", "kdr", "damage_dealt", "damage_received", "damage_ratio"]
+const objectiveStats = ["flags_stolen", "flags_captured", "capture_success", "flags_recovered", "time_with_flag", "carrier_kills"]
 const kitStats = {
     "ARCHER": ["headshots"],
     "ASSASSIN": ['assassination_attempts'],
@@ -65,6 +65,8 @@ export default {
     methods: {
         fancyStat(s) {
             if (s == 'hp_restored') return "HP Restored"
+
+            else if (s == 'kdr') return "KDR"
 
             else if (this.kit == "ELF" && (s == 'flash_bombs' || s == 'headshots')) return this.fancyStat('reflected_' + s)
 
@@ -104,6 +106,10 @@ export default {
                 }
 
                 return '' + Math.round(v / Math.pow(10, 3 * (power - 1)))/1e3 + suffixes[power]
+            } else if (s == "kdr" || s == "damage_ratio") {
+                return Math.round(v * 1000) / 1000
+            } else if (s == "capture_success") {
+                return Math.round(v * 100 * 1e3) / 1e3 + "%"
             } else {
                 return v
             }

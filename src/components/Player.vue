@@ -8,7 +8,7 @@
                     .kits
                         a.panel-block(v-for="k in kits", :key="k", :class="{'is-active': kit.toLowerCase() == k.toLowerCase()}", @click="kit = k.toUpperCase()") 
                             span.panel-icon
-                                img(:src="`/assets/class-icons/${k.toLowerCase()}.png`", alt="k")
+                                img(:src="`/assets/class-icons/${k.toLowerCase()}.png`", :alt="kit")
                             | {{ k }}
         .column
             .block
@@ -21,7 +21,14 @@
                             .media-content
                                 p.title.is-4 {{ player.name }}
                                 transition(name="fade")
-                                    p.subtitle.is-6.has-text-grey(v-if="status != ''", v-html="status")
+                                    .level
+                                        .level-left
+                                            p.subtitle.is-6.has-text-grey(v-if="status != ''", v-html="status")
+                                        .level-right(v-if="mainKits.length > 0")
+                                            .tags
+                                                span.tag.is-light.is-rounded(v-for="kit in mainKits", :key="kit") 
+                                                    img(:src="`/assets/class-icons/${kit.toLowerCase()}.png`", :alt="kit", width="16")
+                                                    | &nbsp;{{ kit.charAt(0).toUpperCase() + kit.slice(1).toLowerCase() }}
             transition(name="fadey")
                 .block(v-if="data")
                     .tabs.is-toggle.is-centered
@@ -30,7 +37,7 @@
                                 a
                                     span {{ t }}
                     .content#stats(v-if="data[mode.toLowerCase()]")
-                        StatDisplay(:stats="data[mode.toLowerCase()][kit]", :kit="kit")
+                        StatDisplay(:stats="stats", :kit="kit")
         .column.is-one-fifth
 
 transition(name="fadey")
@@ -73,6 +80,27 @@ export default {
             if (!this.data)
                 return []
             return Object.keys(this.data[this.mode.toLowerCase()]).sort().map(it => it.charAt(0).toUpperCase() + it.slice(1).toLowerCase())
+        },
+        stats() {
+            let s = this.data[this.mode.toLowerCase()][this.kit]
+
+            return this.addRatios(s)
+        },
+        mainKits() {
+            if (!this.data)
+                return []
+
+            let s = this.data[this.mode.toLowerCase()]
+
+            let mains = {}
+            let total = Object.keys(s).map(it => Number(s[it]["playtime"])).reduce((v, vp) => v + vp)
+
+            for (var kit in s) {
+                if (s[kit]['playtime'] / total > 0.15)
+                    mains[kit] = s[kit]['playtime']
+            }
+
+            return Object.keys(mains).sort((a, b) => mains[b] - mains[a]).slice(0, 3)
         }
     },
     mounted() {
@@ -112,6 +140,14 @@ export default {
             setTimeout(() => this.downloadMsg = "Really hoping nothing broke...", 10000)
             setTimeout(() => this.downloadMsg = "Refreshing the page #soon...", 15000)
             setTimeout(() => window.location.reload(), 20000)
+        },
+        addRatios(a) {
+            let s = a 
+            s["kdr"] = (s["deaths"] == 0) ? 0 : s["kills"] / s["deaths"]
+            s["damage_ratio"] = (s["damage_received"] == 0) ? 0 : s["damage_dealt"] / s["damage_received"]
+            s["capture_success"] = (s["flags_stolen"] == 0) ? 0 : s["flags_captured"] / s["flags_stolen"]
+
+            return s
         }
     }
 };
@@ -167,5 +203,9 @@ export default {
                 overflow-x: hidden;
             }
         }
+    }
+
+    .media-content > p.title {
+        margin-bottom: 0.5rem;
     }
 </style>
