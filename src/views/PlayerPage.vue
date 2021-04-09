@@ -25,7 +25,8 @@ export default {
     data() { 
         return {
             player: null, 
-            error: ''
+            error: '',
+            name: ''
         }; 
     },
     mounted(){

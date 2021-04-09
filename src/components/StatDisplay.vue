@@ -9,7 +9,7 @@
                         p(v-for="s in general", :key="s")
                             span
                                 strong {{ fancyStat(s) }}&nbsp;&nbsp;
-                            | {{ fancyValue(s) }}
+                            span.has-text-grey {{ fancyValue(s) }}
             .tile.is-parent
                 article.tile.box.is-child.notification.is-white
                     p.title PvP
@@ -17,7 +17,7 @@
                         p(v-for="s in pvp", :key="s")
                             span
                                 strong {{ fancyStat(s) }}&nbsp;&nbsp;
-                            | {{ fancyValue(s) }}
+                            span.has-text-grey {{ fancyValue(s) }}
 .tile.is-ancestor
     .tile.is-12
         .tile
@@ -28,7 +28,7 @@
                         p(v-for="s in objective", :key="s")
                             span
                                 strong {{ fancyStat(s) }}&nbsp;&nbsp;
-                            | {{ fancyValue(s) }}
+                            span.has-text-grey {{ fancyValue(s) }}
             .tile.is-parent(v-if="kit in special")
                 article.tile.box.is-child.notification.is-white
                     p.title Class Specific
@@ -36,7 +36,7 @@
                         p(v-for="s in special[kit]", :key="s")
                             span
                                 strong {{ fancyStat(s) }}&nbsp;&nbsp;
-                            | {{ fancyValue(s) }}
+                            span.has-text-grey {{ fancyValue(s) }}
 
 </template>
 
@@ -60,10 +60,6 @@ export default {
             objective: objectiveStats,
             special: kitStats
         }
-    },
-    mounted() {
-        console.log(this.kit)
-        console.log(this.kit in this.special)
     },
     methods: {
         fancyStat(s) {

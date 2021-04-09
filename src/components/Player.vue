@@ -5,7 +5,8 @@
             .container(v-if="data")
                 article.panel.is-primary
                     p.panel-heading Class
-                    a.panel-block(v-for="k in kits", :key="k", :class="{'is-active': kit.toLowerCase() == k.toLowerCase()}", @click="kit = k.toUpperCase()") {{ k }}
+                    .kits
+                        a.panel-block(v-for="k in kits", :key="k", :class="{'is-active': kit.toLowerCase() == k.toLowerCase()}", @click="kit = k.toUpperCase()") {{ k }}
         .column
             .block
                 .card(v-if="player")
@@ -78,7 +79,6 @@ export default {
             method: "GET"
         }).then(res => res.json())
         .then(data => {
-            console.log(data)
             if (typeof data == "string"){
                 this.error = data
             } else {
@@ -158,9 +158,11 @@ export default {
 
     @media screen and (max-width: 764px) {
         .panel {
-            margin-left: 0px;
-            max-height: 30vh;
-            overflow-x: hidden;
+            margin-left: 0.5rem;
+            .kits {
+                max-height: 30vh;
+                overflow-x: hidden;
+            }
         }
     }
 </style>
