@@ -1,41 +1,13 @@
 <template lang="pug">
-.tile.is-ancestor
+.tile.is-ancestor(v-for="cset in categories")
     .tile.is-12
         .tile
-            .tile.is-parent
+            .tile.is-parent(v-for="(category, idx) in cset", :key="idx")
                 article.tile.box.is-child.notification.is-white
-                    p.title General
+                    p.title {{ category.name }}
                     .content
-                        p(v-for="s in general", :key="s")
-                            span
-                                strong {{ fancyStat(s) }}&nbsp;&nbsp;
-                            span.has-text-grey {{ fancyValue(s) }}
-            .tile.is-parent
-                article.tile.box.is-child.notification.is-white
-                    p.title PvP
-                    .content
-                        p(v-for="s in pvp", :key="s")
-                            span
-                                strong {{ fancyStat(s) }}&nbsp;&nbsp;
-                            span.has-text-grey {{ fancyValue(s) }}
-.tile.is-ancestor
-    .tile.is-12
-        .tile
-            .tile.is-parent
-                article.tile.box.is-child.notification.is-white
-                    p.title Objective
-                    .content
-                        p(v-for="s in objective", :key="s")
-                            span
-                                strong {{ fancyStat(s) }}&nbsp;&nbsp;
-                            span.has-text-grey {{ fancyValue(s) }}
-            .tile.is-parent(v-if="kit in special")
-                article.tile.box.is-child.notification.is-white
-                    p.title Class Specific
-                    .content
-                        p(v-for="s in special[kit]", :key="s")
-                            span
-                                strong {{ fancyStat(s) }}&nbsp;&nbsp;
+                        p(v-for="s in category['stats']", :key="s")
+                            span {{ fancyStat(s) }}&nbsp;&nbsp;
                             span.has-text-grey {{ fancyValue(s) }}
 
 </template>
@@ -75,10 +47,37 @@ export default {
     props: ["kit", "stats"],
     data() {
         return {
-            general: generalStats,
-            pvp: pvpStats,
-            objective: objectiveStats,
-            special: kitStats
+            general: {
+                "name": "General",
+                "stats": generalStats
+            },
+            pvp: {
+                "name": "PvP",
+                "stats": pvpStats
+            },
+            objective: {
+                "name": "Objective",
+                "stats": objectiveStats
+            }
+        }
+    },
+    computed: {
+        special() {
+            if (!(this.kit in kitStats))
+                return {}
+            return {
+                "name": "Class-Specific",
+                "stats": kitStats[this.kit]
+            }
+        },
+        categories() {
+            let group = 3
+            let categories = [this.general, this.pvp, this.objective, this.special].filter(it => Object.keys(it).length > 0)
+            let s = []
+            for (var i = 0; i < categories.length; i += group)
+                s.push(categories.slice(i, i+group))
+            
+            return s
         }
     },
     methods: {

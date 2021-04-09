@@ -1,24 +1,5 @@
-# stats-website
+# CTF Stats Website
 
-## Project setup
-```
-yarn install
-```
+So this is the website code for the [stats page](https://nineonefive.xyz). It's built on top of Vue, pug, and SCSS. I host it here on Github just so that Amazon AWS Amplify can read from this repository and rebuild the website as I make changes.
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
-
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+~ 915
