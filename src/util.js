@@ -19,29 +19,6 @@ export function formatDuration(v) {
     }
 
     return newv.join(' ')
-
-    // if (v > 60 * 60 * 24) {
-    //     let q = Math.floor(v / (3600 * 24))
-    //     newv += q + 'd ';
-    //     v -= q * 3600 * 24;
-    // }
-
-    // if (v > 3600) {
-    //     let q = Math.floor(v / (3600))
-    //     newv += q + 'h ';
-    //     v -= q * 3600;
-    // }
-
-    // if (v > 60) {
-    //     let q = Math.floor(v / (60))
-    //     newv += q + 'm ';
-    //     v -= q * 60;
-    // }
-
-    // let q = Math.floor(v)
-    // newv += q + 's';
-
-    // return newv;
 }
 
 export function formatLargeNumber(v) {
@@ -54,11 +31,29 @@ export function formatLargeNumber(v) {
     else {
         let suffixes = ['', 'k', 'M', 'B', 'T']
         let power = suffixes.length - 1
-        while (v < Math.pow(10, 3 * power)) {
+        while (v < Math.pow(1000, power)) {
             power -= 1;
         }
 
-        return '' + round(v / Math.pow(10, 3*power), 1000) + suffixes[power]
+        return '' + round(v / Math.pow(1000, power), 1000) + suffixes[power]
+    }
+}
+
+export function formatMemory(v) {
+    if (v < 0)
+        return '-' + formatMemory(v)
+    
+    else if (v == 0)
+        return '0B'
+
+    else {
+        let suffixes = ['B', 'kB', 'MB', 'GB', 'TB']
+        let power = suffixes.length - 1
+        while (v < Math.pow(1024, power)) {
+            power -= 1;
+        }
+
+        return '' + round(v / Math.pow(1024, power), 1024).toFixed(2) + ' ' + suffixes[power]
     }
 }
 

@@ -11,13 +11,8 @@
                             p.help.is-danger(v-if="searchMessage") {{ searchMessage }}
                     .message.is-danger(v-if="error")
                         .message-body {{ error }}
-                transition(name="fade")
-                    .block(v-if="searchMode && playersTracked > 0")
-                        .level
-                            .level-item.has-text-centered
-                                div
-                                    p.heading Tracked Players
-                                    p.title#tracked {{ playersTrackedFancy }}
+                transition(name="fade", v-if="searchMode")
+                    Metrics
             .column.is-one-fifth
 .block
     .content(v-if="player")
@@ -27,24 +22,21 @@
 <script>
 import Player from '@/components/Player.vue';
 import { playerApi } from '@/api';
-import {formatLargeNumber} from '@/util';
+
+import Metrics from '@/components/Metrics';
 
 export default { 
     name: "PlayerPage",
-    components: {Player},
+    components: {Player, Metrics},
     data() { 
         return {
             player: null, 
             error: '',
             name: '',
-            playersTracked: 0,
             searchMode: this.$route.params.player == null
         }; 
     },
     computed: {
-        playersTrackedFancy() {
-            return formatLargeNumber(this.playersTracked)
-        },
         searchMessage() {
             if (this.name.length > 16) {
                 return "Player names must be at most 16 characters"
@@ -63,8 +55,6 @@ export default {
         if (this.$route.params.player) {
             this.loadPlayer(this.$route.params.player)
         }
-
-        this.loadTrackedPlayers()
     },
     methods: {
         search(){
@@ -90,14 +80,6 @@ export default {
                     this.player = data
                     this.error = ''
                 }
-            })
-        },
-        loadTrackedPlayers() {
-            fetch(playerApi + "?users", {
-                method: "GET"
-            }).then(res => res.json())
-            .then(n => {
-                this.playersTracked = n
             })
         }
     }
