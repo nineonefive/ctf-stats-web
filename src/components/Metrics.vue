@@ -34,16 +34,15 @@ export default {
     name: "Metrics",
     data() {
         return {
-            metrics: {}
+            metrics: {},
+            task: null
         }
     },
     mounted() {
-        Object.keys(metrics).forEach(it => {
-            fetch(`${metricsApi}?metric=${it}`, {
-                method: "GET"
-            }).then(res => res.json())
-            .then(n => this.metrics[it] = metrics[it].display(n))
-        })
+        this.task = setInterval(this.updateMetrics, 3000)
+    },
+    beforeUnmount() {
+        clearInterval(this.task)
     },
     computed: {
         fancyMetrics() {
@@ -56,6 +55,16 @@ export default {
         },
         loaded() {
             return this.fancyMetrics.length == Object.keys(metrics).length
+        }
+    },
+    methods: {
+        updateMetrics() {
+            Object.keys(metrics).forEach(it => {
+                fetch(`${metricsApi}?metric=${it}`, {
+                    method: "GET"
+                }).then(res => res.json())
+                .then(n => this.metrics[it] = metrics[it].display(n))
+            })
         }
     }
 }
