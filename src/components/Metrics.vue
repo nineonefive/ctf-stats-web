@@ -14,7 +14,7 @@ import {formatMemory, formatLargeNumber} from '@/util';
 let metrics = {
     "users": {
         title: "Players Tracked",
-        display: (v) => formatLargeNumber(v, 0)
+        display: (v) => formatLargeNumber(v, 1)
     },
     "data": {
         title: "Data Ingested",
