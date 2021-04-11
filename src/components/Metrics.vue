@@ -14,7 +14,7 @@ import {formatMemory, formatLargeNumber} from '@/util';
 let metrics = {
     "users": {
         title: "Players Tracked",
-        display: formatLargeNumber
+        display: (v) => formatLargeNumber(v, 0)
     },
     "data": {
         title: "Data Ingested",
@@ -26,7 +26,7 @@ let metrics = {
     },
     "api_calls": {
         title: "API Calls",
-        display: formatLargeNumber
+        display: (v) => formatLargeNumber(v, 1)
     }
 }
 
@@ -39,6 +39,7 @@ export default {
         }
     },
     mounted() {
+        this.updateMetrics()
         this.task = setInterval(this.updateMetrics, 3000)
     },
     beforeUnmount() {
