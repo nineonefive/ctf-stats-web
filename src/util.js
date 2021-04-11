@@ -21,7 +21,7 @@ export function formatDuration(v) {
     return newv.join(' ')
 }
 
-export function formatLargeNumber(v, places=3) {
+export function formatLargeNumber(v, places=2) {
     if (v < 0)
         return '-' + formatLargeNumber(v)
     
@@ -34,6 +34,9 @@ export function formatLargeNumber(v, places=3) {
         while (v < Math.pow(1000, power)) {
             power -= 1;
         }
+
+        if (power == 0)
+            return v
 
         return '' + round(v / Math.pow(1000, power), 1000).toFixed(places) + suffixes[power]
     }
