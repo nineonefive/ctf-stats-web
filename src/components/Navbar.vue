@@ -26,6 +26,7 @@
         <a class="navbar-item" href="/"> Home </a>
 
         <a class="navbar-item" href="/stats"> Stats </a>
+        <a class="navbar-item" href="/experiments"> Experiments </a>
       </div>
     </div>
   </nav>
