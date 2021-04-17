@@ -1,7 +1,7 @@
 <template lang="pug">
-.card
+.card(:class="{hoverable: !expanded}")
     .card-content
-        .media
+        .media(@click="toggle")
             .media-left
                 figure.image.is-64x64
                     img(src="http://cravatar.eu/avatar/2779cb1f10344b8da8407bb41d54ce79/64.png", width=64, alt="Miskey")
@@ -12,46 +12,49 @@
             p Ever wonder what Miskey thinks about a map? Probably not, but Miskernet classifies CTF maps based on their map stats.. 
                 | to match Miskey's opinion.
 
-            p.heading Try it out
-            .columns
-                .column.is-one-third
-                    form(@submit.prevent="test") 
-                        .field
-                            label.label Map
-                            .control
-                                .select
-                                    select(v-model="selected")
-                                        option(v-for="map in maps", :key="map.name") {{ map.name }}
-                        .field
-                            .control
-                                button.button.is-primary Test
-                .column
-                    pre(v-if="classification.length > 0") {{ classification }}
+            transition(name="collapse")
+                div.collapsable(v-if="expanded")
+                    p.heading Try it out
 
-            p.heading For Developers
+                    .columns
+                        .column.is-one-third
+                            form(@submit.prevent="test") 
+                                .field
+                                    label.label Map
+                                    .control
+                                        .select
+                                            select(v-model="selected")
+                                                option(v-for="map in maps", :key="map.name") {{ map.name }}
+                                .field
+                                    .control
+                                        button.button.is-primary Test
+                        .column
+                            pre(v-if="classification.length > 0") {{ classification }}
 
-            .block
-                p.subtitle.is-6 Endpoint
+                    p.heading For Developers
 
-                code {{ endpoint }}?id=&lt;map id&gt;
+                    .block
+                        p.subtitle.is-6 Endpoint
 
-            .block
-                p.subtitle.is-6 JSON Response
+                        code {{ endpoint }}?id=&lt;map id&gt;
 
-                pre.
-                    {
-                        id: Number,
-                        name: String,
-                        ...
-                        stats: {
-                            Casual: &lt;map stats&gt;,
-                            Competitive: &lt;map stats&gt;
-                        },
-                        classification: {
-                            Casual: String,
-                            Competitive: String
-                        }
-                    }
+                    .block
+                        p.subtitle.is-6 JSON Response
+
+                        pre.
+                            {
+                                id: Number,
+                                name: String,
+                                ...
+                                stats: {
+                                    Casual: &lt;map stats&gt;,
+                                    Competitive: &lt;map stats&gt;
+                                },
+                                classification: {
+                                    Casual: String,
+                                    Competitive: String
+                                }
+                            }
 </template>
 
 <script>
@@ -70,8 +73,12 @@ export default {
             endpoint: "https://qfrxaan0kh.execute-api.us-east-1.amazonaws.com/default/miskernet",
             maps: maps,
             selected: maps[0].name,
-            classification: ""
+            classification: "",
+            expanded: false
         }
+    },
+    mounted() {
+
     },
     methods: {
         test() {
@@ -84,6 +91,9 @@ export default {
             .then(data => {
                 this.classification = JSON.stringify(data.classification)
             })
+        },
+        toggle() {
+            this.expanded = !this.expanded;
         }
     }
 }
@@ -100,5 +110,13 @@ export default {
 
     .columns {
         margin: 1rem 0rem;
+    }
+
+    .hoverable, .media {
+        cursor: pointer;
+    }
+
+    .hoverable:hover {
+        background: #eee;
     }
 </style>

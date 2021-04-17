@@ -1,9 +1,10 @@
 <template lang="pug">
-.container
-    .block
-        .content
+.block
+    .hero.is-info
+        .hero-body 
             p.title Experiments
-            p Here's a collection of random things I've made, you're welcome to try them out or use them in projects.
+            p Here's a collection of random things I've made, you're welcome to try them out or use them in projects. Click on a card to view more.
+.container
     .block.experiment
         Miskernet
         
@@ -22,13 +23,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    .container {
-        margin: 1rem;
+
+    @media screen and (max-width: 763px) {
+        .container {
+            margin: 1rem;
+        }
     }
 
     @media screen and (min-width: 764px) {
         .experiment {
             margin-left: 2rem;
+        }
+
+        .container {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
         }
     }
 </style>
