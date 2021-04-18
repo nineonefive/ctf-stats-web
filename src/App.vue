@@ -1,16 +1,18 @@
 <template>
-  <Navbar />
   <router-view />
 </template>
 
 <script>
-import Navbar from '@/components/Navbar.vue';
-
-export default { name: "App", components: {Navbar} };
+export default { name: "App" };
 </script>
 
 <style lang="scss">
 * {
   max-width: 100vw;
+}
+
+body {
+  overflow-x: hidden;
+  min-height: 100vh;
 }
 </style>

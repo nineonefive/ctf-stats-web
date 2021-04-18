@@ -237,4 +237,8 @@ export default {
     .kit-tag {
         cursor: pointer;
     }
+
+    .tabs > ul > li.is-active > a {
+        color: white;
+    }
 </style>

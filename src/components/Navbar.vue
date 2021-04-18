@@ -1,35 +1,27 @@
-<template>
-  <nav
-    class="navbar is-light"
-    role="navigation"
-    aria-label="main navigation"
-  >
-    <div class="navbar-brand">
-      <a class="navbar-item" href="/"><strong>CTF Stats</strong></a>
+<template lang="pug">
+nav.navbar.is-transparent(role="navigation", aria-label="main-navigation")
+    .container
+        .navbar-brand
+            a.navbar-item(href="/")
+                strong CTF Stats
 
-      <a
-        role="button"
-        class="navbar-burger"
-        :class="{ 'is-active': active }"
-        aria-label="menu"
-        aria-expanded="false"
-        data-target="menu"
-        @click="doclick">
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-      </a>
-    </div>
+            a.navbar-burger(
+                :class="{ 'is-active': active }", 
+                role="button", 
+                aria-label="menu", 
+                :aria-expanded="active", 
+                data-target="menu", 
+                @click="doclick")
 
-    <div id="menu" class="navbar-menu" :class="{ 'is-active': active }">
-      <div class="navbar-start">
-        <a class="navbar-item" href="/"> Home </a>
+                span(aria-hidden="true")
+                span(aria-hidden="true")
+                span(aria-hidden="true")
 
-        <a class="navbar-item" href="/stats"> Stats </a>
-        <a class="navbar-item" href="/experiments"> Experiments </a>
-      </div>
-    </div>
-  </nav>
+        .navbar-menu#menu(:class="{ 'is-active': active }")
+            .navbar-end
+                a.navbar-item(href="/") Home
+                a.navbar-item(href="/stats") Stats
+                a.navbar-item(href="/experiments") Experiments
 </template>
 
 <script>
@@ -50,6 +42,11 @@ export default {
 
 <style lang="scss" scoped>
 a:hover {
-  color: black;
+  // color: black;
+}
+
+nav {
+  // background: linear-gradient(to bottom, #FFFFFF55, #FFFFFF00);
+  background: white !important;
 }
 </style>

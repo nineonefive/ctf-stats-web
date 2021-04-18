@@ -1,33 +1,34 @@
 <template lang="pug">
-.block(:class="{centered: searchMode}")
-    .container
-        .columns
-            .column.is-one-fifth
-            .column
-                .block
-                    form(id="search", @submit.prevent="search")
-                        .field
-                            input.input(type="text", placeholder="Find a player", v-model="name", :class="{'is-danger': searchMessage}")
-                            p.help.is-danger(v-if="searchMessage") {{ searchMessage }}
-                    .message.is-danger(v-if="error")
-                        .message-body {{ error }}
-                transition(name="fade", v-if="searchMode")
-                    Metrics
-            .column.is-one-fifth
-.block
-    .content(v-if="player")
-        Player(:player="player")
+section.hero(:class="{ 'is-fullheight': searchMode }")
+    Navbar
+    .hero-body
+        .container
+            .columns(:class="{ 'is-vcentered': searchMode }").is-centered
+                .column.is-8
+                    .block
+                        form(id="search", @submit.prevent="search")
+                            .field
+                                input.input(type="text", placeholder="Find a player", v-model="name", :class="{'is-danger': searchMessage}")
+                                p.help.is-danger(v-if="searchMessage") {{ searchMessage }}
+                        .message.is-danger(v-if="error")
+                            .message-body {{ error }}
+                    transition(name="fade", v-if="searchMode")
+                        Metrics
+section.content#page(v-if="player")
+    Player(:player="player")
 </template>
 
 <script>
 import Player from '@/components/Player.vue';
 import { playerApi } from '@/api';
 
+import Navbar from '@/components/Navbar.vue';
+
 import Metrics from '@/components/Metrics';
 
 export default { 
     name: "PlayerPage",
-    components: {Player, Metrics},
+    components: {Player, Metrics, Navbar},
     data() { 
         return {
             player: null, 
@@ -87,9 +88,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    .container {
-        margin-top: 2rem;
-    }
 
     .field {
         margin: 0rem auto;
@@ -108,8 +106,8 @@ export default {
             transform: translateY(25vh);
         }
 
-        .block {
-            transition: transform 0.2s;
+        .columns {
+            transition: 0.7s ease-out;
         }
     }
 
@@ -123,5 +121,10 @@ export default {
 
     .fade-enter-from, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
         opacity: 0;
+    }
+
+    #page {
+        overflow: hidden;
+        padding: 1rem 0;
     }
 </style>
